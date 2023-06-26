@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+<input type="file" id="importFile"/>
+<input type="button" onclick="submitBt()" id="import-submit" value="提交导入文件" />
+</body>
+<script src="../utils/jquery.min.js"></script>
+</html>
+
+
+<script>
+  importFile = document.querySelector("#importFile")
+  importFile.addEventListener('change', (e) => {
+    console.dir(e.target)
+    console.log(e.target.value)
+    e.target.value = ""
+  })
+  function submitBt() {
+    const formData = new FormData();
+    const name = $('#importFile').val();
+    formData.append('file', $('#importFile')[0].files[0]);
+    // 此处可传入多个参数
+    formData.append('name', name);
+    formData.append('md5', 'c0e48a92e759bceee55921bad6f9590f');
+    $.ajax({
+      url: 'http://localhost:8081/api/sys/att/upload.do',
+      type: 'post',
+      async: false,
+      data: formData,
+      processData: false, // 告诉jQuery不要去处理发送的数据
+      contentType: false, // 告诉jQuery不要去设置Content-Type请求头
+      beforeSend(xhr) { // 请求发送之前，可以修改请求头之类的
+        xhr.setRequestHeader('Cookie', 'token=defd73a00b5c4e6ba1eb50bd39134f3c; timestamp=1630913967158; nonce=704585; signature=372ad37518b874c78ae297489ea46e29');
+        xhr.setRequestHeader('bwTicket', 'defd73a00b5c4e6ba1eb50bd39134f3c');
+      },
+      success(res) {
+        if (res.code === '1') {
+          console.log('导入成功');
+        } else {
+          console.log('导入失败');
+        }
+      },
+      error() {
+        console.log('导入失败');
+      },
+    });
+  }
+</script>
